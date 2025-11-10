@@ -10,7 +10,9 @@
 			"request": "launch",
 			"program": "${workspaceFolder}/f2h",
 			"args": [
-				"../lindy/vertex.glsl"
+				"-b20",
+				"-l4",
+				"../lindy/lindy_cards.ppm"
 			],
 			"stopAtEntry": false,
 			"cwd": "${workspaceFolder}",
