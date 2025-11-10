@@ -29,8 +29,8 @@ clean:
 install: release
 	sudo cp $(EXE) /usr/local/bin/$(EXE)
 
-$(EXE): $(OBJ)
-	gcc -o $@ $^ $(LIBS)
+$(EXE): $(OBJ) .vscode/launch.json .vscode/tasks.json
+	gcc -o $@ $(OBJ) $(LIBS)
 
 -include $(DEP)
 

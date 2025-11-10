@@ -12,6 +12,7 @@
 			"args": [
 				"-b20",
 				"-l4",
+				"-tconst unsigned char*",
 				"../lindy/lindy_cards.ppm"
 			],
 			"stopAtEntry": false,

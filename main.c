@@ -10,7 +10,8 @@ struct s_options
 	int multiline;
 	int binary;
 	int header_guard;
-	char var_name[BUFSIZ];
+	char var_name[64];
+	char var_type[64];
 	char file_name[BUFSIZ];
 } options = { 0 };
 
@@ -22,6 +23,7 @@ void show_options()
 	fprintf(stderr, "  binary = %d\n", options.binary);
 	fprintf(stderr, "  header guard = %d\n", options.header_guard);
 	fprintf(stderr, "  variable name = %s\n", options.var_name);
+	fprintf(stderr, "  variable type = %s\n", options.var_type);
 	fprintf(stderr, "  input filename = %s\n", options.file_name);
 	fprintf(stderr, "\n");
 }
@@ -32,11 +34,12 @@ void show_usage(char* appname)
 		appname += 2;
 
 	fprintf(stderr, "\nusage: %s [options] filename\noptions:\n", appname);
-	fprintf(stderr, "  -l n     skip n lines of ASCII text (0)\n");
+	fprintf(stderr, "  -ln      skip n lines of ASCII text (0)\n");
 	fprintf(stderr, "  -m       multiline, outut each line on it's own line (false)\n");
-	fprintf(stderr, "  -b [c]   output an array of binary bytes in [c] columns (16)\n");
+	fprintf(stderr, "  -b[c]    output an array of binary bytes in [c] columns (16)\n");
 	fprintf(stderr, "  -h       include a header guard (false)\n");
 	fprintf(stderr, "  -n name  variable name (filename no extension)\n");
+	fprintf(stderr, "  -t type  variable type (const char *)\n");
 	fprintf(stderr, "\n\n");
 	exit(EXIT_FAILURE);
 }
@@ -45,7 +48,7 @@ char buf[BUFSIZ];
 
 void print_ascii(FILE* fp)
 {
-	printf("const char* %s = ", options.var_name);
+	printf("%s %s = ", options.var_type, options.var_name);
 	if (options.multiline)
 		printf("\n");
 	else
@@ -111,7 +114,7 @@ void print_ascii(FILE* fp)
 
 void print_binary(FILE* fp)
 {
-	printf("const unsigned char %s[] = {\n", options.var_name);
+	printf("%s %s[] = {\n", options.var_type, options.var_name);
 
 	int total_bytes = 0;
 	int col = 0;
@@ -145,10 +148,11 @@ void print_binary(FILE* fp)
 int main(int argc, char* argv[])
 {
 	int opt;
-	memset(options.var_name, 0, BUFSIZ);
+	memset(options.var_name, 0, sizeof(options.var_name));
+	memset(options.var_type, 0, sizeof(options.var_type));
 	memset(options.file_name, 0, BUFSIZ);
 
-	while ((opt = getopt(argc, argv, "l:n:mb::h")) != -1)
+	while ((opt = getopt(argc, argv, "l:n:t:mb::h")) != -1)
 	{
 		// ascii value of option letter
 		switch (opt)
@@ -161,6 +165,11 @@ int main(int argc, char* argv[])
 		case 'n':
 			// n has a mandatory value pointed to by optarg
 			strcpy(options.var_name, optarg);
+			break;
+
+		case 't':
+			// y has a mandatory value pointed to by optarg
+			strcpy(options.var_type, optarg);
 			break;
 
 		case 'm':
@@ -213,6 +222,9 @@ int main(int argc, char* argv[])
 
 		strncpy(options.var_name, start, end - start);
 	}
+
+	if (!strlen(options.var_type))
+		strcpy(options.var_type, "const char *");
 
 		// ??? output a header guard
 	if (options.header_guard)
