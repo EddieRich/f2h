@@ -139,7 +139,7 @@ void print_binary(FILE* fp)
 		}
 	}
 
-	printf("};\nconst size_t sz%s = %d", options.var_name, total_bytes);
+	printf("};\nconst size_t sz%s = %d;", options.var_name, total_bytes);
 }
 
 int main(int argc, char* argv[])
