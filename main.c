@@ -168,7 +168,7 @@ int main(int argc, char* argv[])
 			break;
 
 		case 't':
-			// y has a mandatory value pointed to by optarg
+			// t has a mandatory value pointed to by optarg
 			strcpy(options.var_type, optarg);
 			break;
 
@@ -224,9 +224,14 @@ int main(int argc, char* argv[])
 	}
 
 	if (!strlen(options.var_type))
-		strcpy(options.var_type, "const char *");
+	{
+		if (options.binary)
+			strcpy(options.var_type, "const char");
+		else
+			strcpy(options.var_type, "const char*");
+	}
 
-		// ??? output a header guard
+	// ??? output a header guard
 	if (options.header_guard)
 	{
 		printf("#ifndef __%s_H__\n", options.var_name);
